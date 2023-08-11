@@ -3,9 +3,8 @@ import reactLogo from './assets/react.svg'
 import './App.css';
 import SeachIcon from './assets/search.svg';
 import MovieCard from './MovieCard';
-//9648e8fa
 
-const API_URL = 'http://www.omdbapi.com?apikey=9648e8fa';
+const API_URL = 'https://www.omdbapi.com?apikey=9648e8fa';
 
 
 const App = () => {
@@ -15,10 +14,19 @@ const App = () => {
   const [movies, setMovies] = useState([]);
 
   const searchMovies = async(title) => {
-    const response = await fetch(`${API_URL}&s=${title ? title : 'Batman'}`);
-    const data = await response.json();
-
-    setMovies(data.Search);
+    try {
+      const response = await fetch(`${API_URL}&s=${title ? title : 'Batman'}`);
+      if (!response.ok) {
+        throw new Error('Network response was not okay')
+      }
+      const data = await response.json();
+      if (data.Error) {
+        throw new Error(data.Error);
+      }
+      setMovies(data.Search);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
 
   useEffect(() => {
